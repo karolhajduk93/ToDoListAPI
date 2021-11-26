@@ -1,17 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 using ToDoListAPI.Interfaces;
 using ToDoListAPI.Models;
 using ToDoListAPI.Services;
@@ -36,6 +30,15 @@ namespace ToDoListAPI
 			services.AddSingleton<IToDoListsDatabaseSettings>(sp =>
 				sp.GetRequiredService<IOptions<ToDoListsDatabaseSettings>>().Value);
 
+			services.AddCors(options =>
+			{
+				options.AddDefaultPolicy(builder =>
+					builder.WithOrigins("https://localhost:5001", "http://localhost:5000")
+						.AllowAnyMethod()
+						.AllowAnyHeader()
+						.WithMethods("GET, PATCH, DELETE, PUT, POST, OPTIONS"));
+			});
+
 			services.AddSingleton<ToDoListService>();
 
 			services.AddControllers();
@@ -54,6 +57,10 @@ namespace ToDoListAPI
 				app.UseSwagger();
 				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDoListAPI v1"));
 			}
+			app.UseCors(policy =>
+				policy.WithOrigins("http://localhost:5000", "https://localhost:5001")
+					.AllowAnyMethod()
+					.WithHeaders(HeaderNames.ContentType));
 
 			app.UseHttpsRedirection();
 

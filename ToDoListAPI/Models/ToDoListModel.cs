@@ -17,7 +17,7 @@ namespace ToDoListAPI.Models
 		[BsonElement("Name")]
 		public string ListName { get; set; }
 
-		public DateTime Date { get; set; }
+		public string Date { get; set; }
 
 		public List<ToDoItemModel> ToDoItems { get; set; }
 	}
