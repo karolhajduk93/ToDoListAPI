@@ -25,7 +25,7 @@ namespace ToDoListAPI.Controllers
 		public ActionResult<List<ToDoListModel>> Get() =>
 			_toDoListService.Get();
 
-		[HttpGet("{id:length(24)}", Name = "GetList")]
+		[HttpGet("{id}", Name = "GetList")]
 		public ActionResult<ToDoListModel> Get(string id)
 		{
 			var list = _toDoListService.Get(id);
@@ -46,7 +46,7 @@ namespace ToDoListAPI.Controllers
 			return CreatedAtRoute("GetList", new { id = list.Id.ToString() }, list);
 		}
 
-		[HttpPut("{id:length(24)}")]
+		[HttpPut("{id}")]
 		public IActionResult Update(string id, ToDoListModel listIn)
 		{
 			var list = _toDoListService.Get(id);
@@ -61,7 +61,7 @@ namespace ToDoListAPI.Controllers
 			return NoContent();
 		}
 
-		[HttpDelete("{id:length(24)}")]
+		[HttpDelete("{id}")]
 		public IActionResult Delete(string id)
 		{
 			var list = _toDoListService.Get(id);

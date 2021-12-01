@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
+using System.Collections.Generic;
 using ToDoListAPI.Interfaces;
 using ToDoListAPI.Models;
 
@@ -13,7 +13,6 @@ namespace ToDoListAPI.Services
 		{
 			var client = new MongoClient(settings.ConnectionString);
 			var database = client.GetDatabase(settings.DatabaseName);
-
 			_todosLists = database.GetCollection<ToDoListModel>(settings.ToDoListsCollectionName);
 		}
 
