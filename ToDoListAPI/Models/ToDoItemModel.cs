@@ -7,6 +7,7 @@ namespace ToDoListAPI.Models
 	public class ToDoItemModel
 	{
 		public string Text { get; set; }
+		public string OwnerId { get; set; }
 		public string ToDoItemId { get; set; }
 		public string Date { get; set; }
 		public bool Checked { get; set; }
