@@ -20,7 +20,7 @@ namespace ToDoListAPI.Services
 			_todosLists.Find(list => true).ToList();
 
 		public ToDoListModel Get(string id) =>
-			_todosLists.Find<ToDoListModel>(list => list.Id == id).FirstOrDefault();
+			_todosLists.Find(list => list.Id == id).FirstOrDefault();
 
 		public ToDoListModel Create(ToDoListModel list)
 		{

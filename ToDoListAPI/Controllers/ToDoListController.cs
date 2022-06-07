@@ -18,10 +18,10 @@ namespace ToDoListAPI.Controllers
 
 		public ToDoListController(ToDoListService toDoListService)
 		{
-			_toDoListService = toDoListService;
+            _toDoListService = toDoListService;
 		}
 
-		[HttpGet]
+        [HttpGet]
 		public ActionResult<List<ToDoListModel>> Get() =>
 			_toDoListService.Get();
 

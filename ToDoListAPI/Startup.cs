@@ -30,16 +30,17 @@ namespace ToDoListAPI
 			services.AddSingleton<IToDoListsDatabaseSettings>(sp =>
 				sp.GetRequiredService<IOptions<ToDoListsDatabaseSettings>>().Value);
 
-			services.AddCors(options =>
-			{
-				options.AddDefaultPolicy(builder =>
-					builder.WithOrigins("https://localhost:5001", "http://localhost:5000")
-						.AllowAnyMethod()
-						.AllowAnyHeader()
-						.WithMethods("GET, PATCH, DELETE, PUT, POST, OPTIONS"));
-			});
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                    builder.WithOrigins("https://localhost:5001", "http://localhost:5000")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+						.AllowCredentials()
+                        .WithMethods("GET, PATCH, DELETE, PUT, POST, OPTIONS"));
+            });
 
-			services.AddSingleton<ToDoListService>();
+            services.AddSingleton<ToDoListService>();
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
@@ -66,6 +67,7 @@ namespace ToDoListAPI
 
 			app.UseRouting();
 
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
