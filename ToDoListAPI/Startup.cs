@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using ToDoListAPI.Interfaces;
 using ToDoListAPI.Models;
 using ToDoListAPI.Services;
@@ -27,16 +30,33 @@ namespace ToDoListAPI
 			services.Configure<ToDoListsDatabaseSettings>(
 				Configuration.GetSection(nameof(ToDoListsDatabaseSettings)));
 
-			services.AddSingleton<IToDoListsDatabaseSettings>(sp =>
+            //not sure about this
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
+                });
+
+            services.AddSingleton<IToDoListsDatabaseSettings>(sp =>
 				sp.GetRequiredService<IOptions<ToDoListsDatabaseSettings>>().Value);
 
-            services.AddCors(options =>
+			services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
-                    builder.WithOrigins("https://localhost:5001", "http://localhost:5000")
+                    builder
+						.WithOrigins("https://localhost:5001", "http://localhost:5000")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-						.AllowCredentials()
+						//.AllowCredentials()
                         .WithMethods("GET, PATCH, DELETE, PUT, POST, OPTIONS"));
             });
 
@@ -45,7 +65,7 @@ namespace ToDoListAPI
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
 			{
-				c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDoListAPI", Version = "v1" });
+				c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDoListAPI", Version = "v1"});
 			});
 		}
 
@@ -61,7 +81,8 @@ namespace ToDoListAPI
 			app.UseCors(policy =>
 				policy.WithOrigins("http://localhost:5000", "https://localhost:5001")
 					.AllowAnyMethod()
-					.WithHeaders(HeaderNames.ContentType));
+					.AllowAnyHeader());
+					
 
 			app.UseHttpsRedirection();
 
